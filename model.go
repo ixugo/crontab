@@ -27,6 +27,7 @@ type Task struct {
 type Record struct {
 	LastTimeAt string `json:"last_time_at"`
 	Count      int64  `json:"count"`
+	Result     string `json:"result"`
 	id         cron.EntryID
 }
 

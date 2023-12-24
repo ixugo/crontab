@@ -73,7 +73,11 @@ func (e *Engine) Run(tasks ...*Task) error {
 		id, err := e.cron.AddFunc(t.Cron, func() {
 			t.LastTimeAt = time.Now().Format(time.DateTime)
 			t.Count++
-			_ = f(t.Func.Params)
+			if err := f(t.Func.Params); err != nil {
+				t.Result = err.Error()
+			} else {
+				t.Result = "OK"
+			}
 		})
 		if err != nil {
 			return err
@@ -110,7 +114,11 @@ func (e *Engine) Start(key string) error {
 			t.id, _ = e.cron.AddFunc(t.Cron, func() {
 				t.LastTimeAt = time.Now().Format(time.DateTime)
 				t.Count++
-				_ = f(t.Func.Params)
+				if err := f(t.Func.Params); err != nil {
+					t.Result = err.Error()
+				} else {
+					t.Result = "OK"
+				}
 			})
 			return nil
 		}
