@@ -20,15 +20,15 @@ type Task struct {
 	Cron        string `yaml:"cron" json:"cron"`
 	Func        Func   `yaml:"func" json:"-"`
 
-	Record
+	Record `yaml:"-"`
 }
 
 // Record 运行时的数据记录
 type Record struct {
-	LastTimeAt string `json:"last_time_at"`
-	Count      int64  `json:"count"`
-	Result     string `json:"result"`
-	id         cron.EntryID
+	LastTimeAt string       `yaml:"-" json:"last_time_at"`
+	Count      int64        `yaml:"-" json:"count"`
+	Result     string       `yaml:"-" json:"result"`
+	ID         cron.EntryID `yaml:"-" json:"id"`
 }
 
 // Func ...

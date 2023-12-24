@@ -82,7 +82,7 @@ func (e *Engine) Run(tasks ...*Task) error {
 		if err != nil {
 			return err
 		}
-		t.id = id
+		t.ID = id
 	}
 	e.cron.Start()
 	return nil
@@ -90,13 +90,13 @@ func (e *Engine) Run(tasks ...*Task) error {
 
 // Stop 停止任务
 func (e *Engine) Stop(key string) error {
-	for _, v := range e.tasks {
-		if key == v.Key {
-			if v.id <= 0 {
+	for _, t := range e.tasks {
+		if key == t.Key {
+			if t.ID <= 0 {
 				return nil
 			}
-			e.cron.Remove(v.id)
-			v.id = -1
+			e.cron.Remove(t.ID)
+			t.ID = -1
 			return nil
 		}
 	}
@@ -111,7 +111,7 @@ func (e *Engine) Start(key string) error {
 			if !exist {
 				return ErrNoExistFunc
 			}
-			t.id, _ = e.cron.AddFunc(t.Cron, func() {
+			t.ID, _ = e.cron.AddFunc(t.Cron, func() {
 				t.LastTimeAt = time.Now().Format(time.DateTime)
 				t.Count++
 				if err := f(t.Func.Params); err != nil {
@@ -155,22 +155,29 @@ func (e *Engine) init() *Engine {
 	{
 		f := filepath.Join(dir, "crontab.yaml")
 		if b, err := os.ReadFile(f); err == nil { // nolint
-			var out Model
-			if err := yaml.Unmarshal(b, &out); err == nil {
+			if out, err := tasks(b); err == nil {
 				e.tasks = out.Tasks
-				return e
 			}
 		}
 	}
 	{
 		f := filepath.Join(dir, "configs/crontab.yaml")
 		if b, err := os.ReadFile(f); err == nil { // nolint
-			var out Model
-			if err := yaml.Unmarshal(b, &out); err == nil {
+			if out, err := tasks(b); err == nil {
 				e.tasks = out.Tasks
-				return e
 			}
 		}
 	}
 	return e
+}
+
+func tasks(b []byte) (Model, error) {
+	var out Model
+	err := yaml.Unmarshal(b, &out)
+	if err == nil {
+		for _, v := range out.Tasks {
+			v.ID = -1
+		}
+	}
+	return out, err
 }
