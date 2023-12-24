@@ -140,6 +140,16 @@ func (e *Engine) Exec(key string) error {
 	return ErrNoExistTask
 }
 
+// reload 重载任务
+func (e *Engine) reload() error {
+	for _, t := range e.tasks {
+		_ = e.Stop(t.Key)
+	}
+	e.cron.Stop()
+	e.cron = cron.New(cron.WithSeconds())
+	return e.init().Run()
+}
+
 func (e *Engine) init() *Engine {
 	dir := filepath.Dir(os.Args[0])
 	{

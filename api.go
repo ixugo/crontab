@@ -8,6 +8,7 @@ func Register(g *gin.RouterGroup) {
 	g.POST("/crontab/:key/exec", ExecTask)
 	g.DELETE("/crontab/:key", StopTask)
 	g.POST("/crontab/:key", StartTask)
+	g.POST("/crontab/reload", ReloadTasks)
 }
 
 // FindTasks 查询全部任务列表
@@ -45,4 +46,13 @@ func ExecTask(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"key": key})
+}
+
+// ReloadTasks 重载任务，用于配置文件更新
+func ReloadTasks(c *gin.Context) {
+	if err := Default().reload(); err != nil {
+		c.JSON(400, gin.H{"msg": err})
+		return
+	}
+	c.JSON(200, gin.H{"msg": "ok"})
 }
