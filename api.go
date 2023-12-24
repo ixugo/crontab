@@ -14,7 +14,7 @@ func Register(g *gin.RouterGroup) {
 // FindTasks 查询全部任务列表
 func FindTasks(c *gin.Context) {
 	c.IndentedJSON(200, gin.H{
-		"items": Default().tasks,
+		"items": Default().Tasks(),
 	})
 }
 

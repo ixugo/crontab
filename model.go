@@ -26,6 +26,7 @@ type Task struct {
 // Record 运行时的数据记录
 type Record struct {
 	LastTimeAt string       `yaml:"-" json:"last_time_at"`
+	NextTimeAt string       `yaml:"-" json:"next_time_at"`
 	Count      int64        `yaml:"-" json:"count"`
 	Result     string       `yaml:"-" json:"result"`
 	ID         cron.EntryID `yaml:"-" json:"id"`

@@ -71,7 +71,6 @@ func (e *Engine) Run(tasks ...*Task) error {
 			continue
 		}
 		id, err := e.cron.AddFunc(t.Cron, func() {
-			t.LastTimeAt = time.Now().Format(time.DateTime)
 			t.Count++
 			if err := f(t.Func.Params); err != nil {
 				t.Result = err.Error()
@@ -86,6 +85,25 @@ func (e *Engine) Run(tasks ...*Task) error {
 	}
 	e.cron.Start()
 	return nil
+}
+
+// Tasks 获取任务列表
+func (e *Engine) Tasks() []Task {
+	es := e.cron.Entries()
+
+	out := make([]Task, 0, len(e.tasks))
+	for _, t := range e.tasks {
+		if t.ID > 0 && int(t.ID) <= len(es) {
+			v := es[t.ID-1]
+			if !v.Prev.IsZero() {
+				t.LastTimeAt = v.Prev.Format(time.DateTime)
+			}
+			t.NextTimeAt = v.Next.Format(time.DateTime)
+		}
+		t := *t
+		out = append(out, t)
+	}
+	return out
 }
 
 // Stop 停止任务
@@ -112,7 +130,6 @@ func (e *Engine) Start(key string) error {
 				return ErrNoExistFunc
 			}
 			t.ID, _ = e.cron.AddFunc(t.Cron, func() {
-				t.LastTimeAt = time.Now().Format(time.DateTime)
 				t.Count++
 				if err := f(t.Func.Params); err != nil {
 					t.Result = err.Error()
