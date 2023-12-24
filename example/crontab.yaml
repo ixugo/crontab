@@ -1,0 +1,19 @@
+version: 1
+tasks:
+  - key: task1
+    title: 定时任务1
+    description: 这是定时任务1的描述
+    cron: "*/2 * * * * *"
+    func:
+      name: function1
+      params:
+        expired: 1h
+
+  - key: task2
+    title: 定时任务2
+    description: 这是定时任务2的描述
+    cron: "*/5 * * * * *"
+    func:
+      name: function2
+      params:
+        expired: 1h
