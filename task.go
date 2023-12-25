@@ -157,8 +157,8 @@ func (e *Engine) Exec(key string) error {
 	return ErrNoExistTask
 }
 
-// reload 重载任务
-func (e *Engine) reload() error {
+// Reload 重载任务，此重载从会指定路径读取配置文件
+func (e *Engine) Reload() error {
 	for _, t := range e.tasks {
 		_ = e.Stop(t.Key)
 	}

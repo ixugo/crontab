@@ -50,7 +50,7 @@ func ExecTask(c *gin.Context) {
 
 // ReloadTasks 重载任务，用于配置文件更新
 func ReloadTasks(c *gin.Context) {
-	if err := Default().reload(); err != nil {
+	if err := Default().Reload(); err != nil {
 		c.JSON(400, gin.H{"msg": err})
 		return
 	}
