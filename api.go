@@ -22,7 +22,7 @@ func FindTasks(c *gin.Context) {
 func StopTask(c *gin.Context) {
 	key := c.Param("key")
 	if err := Default().Stop(key); err != nil {
-		c.JSON(400, gin.H{"msg": err})
+		c.JSON(400, gin.H{"msg": err.Error()})
 		return
 	}
 	c.JSON(200, gin.H{"key": key})
@@ -32,7 +32,7 @@ func StopTask(c *gin.Context) {
 func StartTask(c *gin.Context) {
 	key := c.Param("key")
 	if err := Default().Start(key); err != nil {
-		c.JSON(400, gin.H{"msg": err})
+		c.JSON(400, gin.H{"msg": err.Error()})
 		return
 	}
 	c.JSON(200, gin.H{"key": key})
@@ -42,7 +42,7 @@ func StartTask(c *gin.Context) {
 func ExecTask(c *gin.Context) {
 	key := c.Param("key")
 	if err := Default().Exec(key); err != nil {
-		c.JSON(400, gin.H{"msg": err})
+		c.JSON(400, gin.H{"msg": err.Error()})
 		return
 	}
 	c.JSON(200, gin.H{"key": key})
@@ -51,7 +51,7 @@ func ExecTask(c *gin.Context) {
 // ReloadTasks 重载任务，用于配置文件更新
 func ReloadTasks(c *gin.Context) {
 	if err := Default().Reload(); err != nil {
-		c.JSON(400, gin.H{"msg": err})
+		c.JSON(400, gin.H{"msg": err.Error()})
 		return
 	}
 	c.JSON(200, gin.H{"msg": "ok"})
