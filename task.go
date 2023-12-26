@@ -94,7 +94,7 @@ func (e *Engine) Tasks() []Task {
 	out := make([]Task, 0, len(e.tasks))
 	for _, t := range e.tasks {
 		if t.ID > 0 && int(t.ID) <= len(es) {
-			v := es[t.ID-1]
+			v := getEntry(es, t.ID)
 			if !v.Prev.IsZero() {
 				t.LastTimeAt = v.Prev.Format(time.DateTime)
 			}
@@ -104,6 +104,15 @@ func (e *Engine) Tasks() []Task {
 		out = append(out, t)
 	}
 	return out
+}
+
+func getEntry(es []cron.Entry, id cron.EntryID) cron.Entry {
+	for _, v := range es {
+		if v.ID == id {
+			return v
+		}
+	}
+	return cron.Entry{}
 }
 
 // Stop 停止任务
