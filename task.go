@@ -70,14 +70,7 @@ func (e *Engine) Run(tasks ...*Task) error {
 			slog.Error("func not found", slog.String("key", t.Key))
 			continue
 		}
-		id, err := e.cron.AddFunc(t.Cron, func() {
-			t.Count++
-			if err := f(t.Func.Params); err != nil {
-				t.Result = err.Error()
-			} else {
-				t.Result = "OK"
-			}
-		})
+		id, err := e.cron.AddFunc(t.Cron, e.wrap(t, f))
 		if err != nil {
 			return err
 		}
@@ -138,18 +131,21 @@ func (e *Engine) Start(key string) error {
 			if !exist {
 				return ErrNoExistFunc
 			}
-			t.ID, _ = e.cron.AddFunc(t.Cron, func() {
-				t.Count++
-				if err := f(t.Func.Params); err != nil {
-					t.Result = err.Error()
-				} else {
-					t.Result = "OK"
-				}
-			})
+			t.ID, _ = e.cron.AddFunc(t.Cron, e.wrap(t, f))
 			return nil
 		}
 	}
 	return ErrNoExistTask
+}
+func (e *Engine) wrap(t *Task, f Handler) func() {
+	return func() {
+		t.Count++
+		if err := f(t.Func.Params); err != nil {
+			t.Result = err.Error()
+		} else {
+			t.Result = "OK"
+		}
+	}
 }
 
 // Exec 立即执行任务
@@ -160,7 +156,13 @@ func (e *Engine) Exec(key string) error {
 			if !exist {
 				return ErrNoExistFunc
 			}
-			return f(t.Func.Params)
+			t.Count++
+			if err := f(t.Func.Params); err != nil {
+				t.Result = err.Error()
+				return err
+			}
+			t.Result = "OK"
+			return nil
 		}
 	}
 	return ErrNoExistTask
