@@ -3,6 +3,7 @@ module github.com/ixugo/crontab
 go 1.21.3
 
 require (
+	github.com/BurntSushi/toml v1.3.2
 	github.com/gin-gonic/gin v1.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	gopkg.in/yaml.v3 v3.0.1

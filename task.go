@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/robfig/cron/v3"
 	"gopkg.in/yaml.v3"
 )
@@ -96,6 +97,7 @@ func (e *Engine) Tasks() []Task {
 		t := *t
 		out = append(out, t)
 	}
+
 	return out
 }
 
@@ -152,16 +154,7 @@ func (e *Engine) wrap(t *Task, f Handler) func() {
 func (e *Engine) Exec(key string) error {
 	for _, t := range e.tasks {
 		if key == t.Key {
-			f, exist := e.data[t.Func.Name]
-			if !exist {
-				return ErrNoExistFunc
-			}
-			t.Count++
-			if err := f(t.Func.Params); err != nil {
-				t.Result = err.Error()
-				return err
-			}
-			t.Result = "OK"
+			e.cron.Entry(t.ID).WrappedJob.Run()
 			return nil
 		}
 	}
@@ -195,6 +188,11 @@ func (e *Engine) init() *Engine {
 				e.tasks = out.Tasks
 			}
 		}
+	}
+
+	fmt.Println(">>>>>>>>")
+	if err := toml.NewEncoder(os.Stdout).Encode(Model{Tasks: e.tasks, Version: "0.1"}); err != nil {
+		fmt.Println(err)
 	}
 	return e
 }
