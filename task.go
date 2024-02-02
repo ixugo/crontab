@@ -6,9 +6,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-	"reflect"
-	"runtime"
-	"strings"
 	"sync"
 	"time"
 
@@ -40,12 +37,12 @@ func Default() *Engine {
 }
 
 // Register 注册任务函数
-func Register(task func(Params) error) {
-	name := runtime.FuncForPC(reflect.ValueOf(task).Pointer()).Name()
-	name = name[strings.LastIndex(name, ".")+1:]
-	if strings.HasPrefix(name, "func") {
-		panic("不允许注册匿名函数，请更换函数名")
-	}
+func Register(name string, task func(Params) error) {
+	// name := runtime.FuncForPC(reflect.ValueOf(task).Pointer()).Name()
+	// name = name[strings.LastIndex(name, ".")+1:]
+	// if strings.HasPrefix(name, "func") {
+	// panic("不允许注册匿名函数，请更换函数名")
+	// }
 	Default().Register(name, task)
 }
 

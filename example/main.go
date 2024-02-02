@@ -13,8 +13,7 @@ func logic(crontab.Params) error {
 }
 func main() {
 	// 注册业务函数
-	crontab.Register(logic)
-	// 不允许匿名函数
+	crontab.Register("logic", logic)
 	// crontab.Register(func(crontab.Params) error {
 	// 	fmt.Println("function2")
 	// 	return nil
