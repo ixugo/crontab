@@ -3,7 +3,7 @@ package crontab
 import "github.com/gin-gonic/gin"
 
 // Register 注册路由
-func Register(g *gin.RouterGroup) {
+func RegisterAPI(g *gin.RouterGroup) {
 	g.GET("/crontab", FindTasks)
 	g.POST("/crontab/:key/exec", ExecTask)
 	g.DELETE("/crontab/:key", StopTask)

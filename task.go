@@ -5,6 +5,9 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"reflect"
+	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -36,9 +39,14 @@ func Default() *Engine {
 	return e
 }
 
-// Add 添加任务函数
-func Add(name string, task func(Params) error) {
-	Default().Add(name, task)
+// Register 注册任务函数
+func Register(task func(Params) error) {
+	name := runtime.FuncForPC(reflect.ValueOf(task).Pointer()).Name()
+	name = name[strings.LastIndex(name, ".")+1:]
+	if strings.HasPrefix(name, "func") {
+		panic("不允许注册匿名函数，请更换函数名")
+	}
+	Default().Register(name, task)
 }
 
 // Run 从可执行程序目录下加载任务
@@ -54,8 +62,12 @@ type Engine struct {
 	cron  *cron.Cron
 }
 
-// Add 添加任务函数
-func (e *Engine) Add(name string, task Handler) {
+// Register 注册任务函数
+func (e *Engine) Register(name string, task Handler) {
+	_, exist := e.data[name]
+	if exist {
+		panic("定时任务不允许重名函数")
+	}
 	e.data[name] = task
 }
 

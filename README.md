@@ -19,7 +19,7 @@ tasks:
     description: 这是定时任务1的描述，每 2 秒执行一次
     cron: "*/2 * * * * *"
     func:
-      name: function1
+      name: logic
       params:
         expired: 1h
 
@@ -35,16 +35,19 @@ tasks:
 
 3. 执行定时任务
 ```go
+
+func logic(crontab.Params) error {
+	fmt.Println("function1")
+	return nil
+}
 func main() {
 	// 注册业务函数
-	crontab.Add("function1", func(crontab.Params) error {
-		fmt.Println("function1")
-		return nil
-	})
-	crontab.Add("function2", func(crontab.Params) error {
-		fmt.Println("function2")
-		return nil
-	})
+	crontab.Register(logic)
+	// 不允许匿名函数
+	// crontab.Register(func(crontab.Params) error {
+	// 	fmt.Println("function2")
+	// 	return nil
+	// })
 	if err := crontab.Run(); err != nil {
 		panic(err)
 	}
@@ -52,8 +55,8 @@ func main() {
 	// 注册路由
 	g := gin.Default()
 	api := g.Group("/api")
-	crontab.Register(api)
-	_ = g.Run(":8080")
+	crontab.RegisterAPI(api)
+	_ = g.Run(":8081")
 }
 ```
 
