@@ -1,11 +1,19 @@
 version: 1
+
+# 常用的设置，注意从秒开始。
+# 每间隔 5 分钟执行一次 `0 */5 * * * *`
+# 每天凌晨 1 点执行一次 `0 0 1 * * *`
+# 每 3 天的凌晨 2 点执行一次 `0 0 2 */3 * *`
+# 每个小时的执行一次 `0 0 * * * *`
+# 每秒执行 `@every 1s`
+
 tasks:
   - key: task1
     title: 定时任务1
     description: 这是定时任务1的描述
     cron: "*/2 * * * * *"
     func:
-      name: function1
+      name: logic
       params:
         expired: 1h
 

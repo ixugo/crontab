@@ -18,7 +18,7 @@ type Task struct {
 	Title       string `yaml:"title" json:"title"`
 	Description string `yaml:"description" json:"description"`
 	Cron        string `yaml:"cron" json:"cron"`
-	Func        Func   `yaml:"func" json:"-"`
+	Func        Params `yaml:"func" json:"-"`
 
 	Record `yaml:"-"`
 }
@@ -32,13 +32,8 @@ type Record struct {
 	ID         cron.EntryID `yaml:"-" json:"id"`
 }
 
-// Func ...
-type Func struct {
-	Name   string `yaml:"name" json:"name"`
-	Params Params `yaml:"params" json:"params"`
-}
-
-// Params 入参
+// Params ...
 type Params struct {
+	Name    string        `yaml:"name" json:"name"`
 	Expired time.Duration `yaml:"expired" json:"expired"`
 }

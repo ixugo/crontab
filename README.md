@@ -2,6 +2,10 @@
 
 ![image](http://img.golang.space/img-1703425476111.png)
 
+### 注意:
+< 0.2 版本使用的 yaml 配置
+>= 0.2 版本该用 toml 配置
+
 ## 快速开始
 
 1. GET Package

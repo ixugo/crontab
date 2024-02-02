@@ -1,6 +1,7 @@
 package crontab
 
 import (
+	"bytes"
 	"fmt"
 	"log/slog"
 	"os"
@@ -13,7 +14,6 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/robfig/cron/v3"
-	"gopkg.in/yaml.v3"
 )
 
 var e *Engine
@@ -154,7 +154,7 @@ func (e *Engine) Start(key string) error {
 func (e *Engine) wrap(t *Task, f Handler) func() {
 	return func() {
 		t.Count++
-		if err := f(t.Func.Params); err != nil {
+		if err := f(t.Func); err != nil {
 			t.Result = err.Error()
 		} else {
 			t.Result = "OK"
@@ -186,7 +186,7 @@ func (e *Engine) Reload() error {
 func (e *Engine) init() *Engine {
 	dir := filepath.Dir(os.Args[0])
 	{
-		f := filepath.Join(dir, "crontab.yaml")
+		f := filepath.Join(dir, "crontab.toml")
 		if b, err := os.ReadFile(f); err == nil { // nolint
 			if out, err := tasks(b); err == nil {
 				e.tasks = out.Tasks
@@ -194,24 +194,19 @@ func (e *Engine) init() *Engine {
 		}
 	}
 	{
-		f := filepath.Join(dir, "configs/crontab.yaml")
+		f := filepath.Join(dir, "configs/crontab.toml")
 		if b, err := os.ReadFile(f); err == nil { // nolint
 			if out, err := tasks(b); err == nil {
 				e.tasks = out.Tasks
 			}
 		}
 	}
-
-	fmt.Println(">>>>>>>>")
-	if err := toml.NewEncoder(os.Stdout).Encode(Model{Tasks: e.tasks, Version: "0.1"}); err != nil {
-		fmt.Println(err)
-	}
 	return e
 }
 
 func tasks(b []byte) (Model, error) {
 	var out Model
-	err := yaml.Unmarshal(b, &out)
+	_, err := toml.NewDecoder(bytes.NewReader(b)).Decode(&out)
 	if err == nil {
 		for _, v := range out.Tasks {
 			v.ID = -1
