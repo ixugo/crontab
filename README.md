@@ -3,8 +3,8 @@
 ![image](http://img.golang.space/img-1703425476111.png)
 
 ### 注意:
-< 0.2 版本使用的 yaml 配置
->= 0.2 版本该用 toml 配置
+`< 0.2` 版本使用的 yaml 配置
+`>= 0.2` 版本改用 toml 配置
 
 ## 快速开始
 
@@ -16,25 +16,25 @@ go get -u github.com/ixugo/crontab
 2. 编辑配置
 在可执行文件同目录下，或 configs 目录下，写入 crontab.yaml 文件。
 ```yaml
-version: 1
-tasks:
-  - key: task1
-    title: 定时任务1
-    description: 这是定时任务1的描述，每 2 秒执行一次
-    cron: "*/2 * * * * *"
-    func:
-      name: logic
-      params:
-        expired: 1h
+version = "0.2"
 
-  - key: task2
-    title: 定时任务2
-    description: 这是定时任务2的描述，每 5 秒执行一次
-    cron: "*/5 * * * * *"
-    func:
-      name: function2
-      params:
-        expired: 1h
+[[tasks]]
+  key = "task1"
+  title = "定时任务1"
+  description = "这是定时任务1的描述"
+  cron = "*/2 * * * * *"
+  [tasks.func]
+    name = "logic" # 函数名
+    expired = "1h"
+
+[[tasks]]
+  key = "task2"
+  title = "定时任务2"
+  description = "这是定时任务2的描述"
+  cron = "*/5 * * * * *"
+  [tasks.func]
+    name = "function2"
+    expired = "1h"
 ```
 
 3. 执行定时任务
