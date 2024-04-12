@@ -4,6 +4,10 @@ on:
   release:
     types: [created] # 表示在创建新的 Release 时触发
 
+permissions:
+    contents: write
+    packages: write
+
 jobs:
   build-go-binary:
     runs-on: ubuntu-latest
@@ -22,5 +26,4 @@ jobs:
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
           goversion: 1.22 # 指定编译使用的 Golang 版本
-          extra_files: README.md # 需要包含的额外文件
           project_path: ./example
